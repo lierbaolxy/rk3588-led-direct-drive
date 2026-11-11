@@ -1,0 +1,45 @@
+# ---- 大体积素材：视频、抓包回放帧、第三方压缩包 ----
+*.mp4
+*.mkv
+*.pkl
+*.rar
+*.zip
+*.7z
+明暗转换视频/
+暗场测试视频/
+
+# ---- 截图与临时产物：只保留测试图 ----
+*.jpg
+*.png
+!test_pattern.png
+*.log
+*.err
+*.pid
+.screenshots/
+probe_28.txt
+
+# ---- Python ----
+__pycache__/
+*.pyc
+
+# ---- 编译产物：只提交源码 ----
+*.ko
+*.ko.*
+*.o
+*.mod
+*.mod.c
+.tmp_versions/
+Module.symvers
+modules.order
+kmod_backup_20261103/nova_desktop
+kmod_backup_20261104/nova_desktop
+
+# ---- 私人记忆与现场凭据 ----
+_记忆备份/
+
+# ---- 第三方参考项目：不收录，README 里给出出处 ----
+olebecknovaled/
+
+# ---- 办公产物 ----
+*.pptx
+*.docx
