@@ -30,7 +30,7 @@
 
 ```
 .
-├── doc/      文档（含本 README）：协议分析、四机方案、60fps 部署 SOP
+├── docs/     文档（含本 README）：协议分析、四机方案、60fps 部署 SOP
 ├── src/      发送端与启动链
 ├── third/    外部引用说明（不收录第三方代码）
 └── other/    抓包分析、回放、镜像等工具
@@ -58,7 +58,7 @@
 | `fix_nic.ps1` | Windows 侧关 EEE/ULPMode/流控 |
 | `test_pattern.png` | 480×1080 四色测试图 |
 
-### doc/ 文档
+### docs/ 文档
 
 `RK3588四机直驱LED大屏解决方案.md`、`RK3588四屏60fps直驱部署SOP.md`、`协议分析与回放说明.md`。
 
