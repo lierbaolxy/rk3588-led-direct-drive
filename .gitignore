@@ -31,7 +31,7 @@ __pycache__/
 .tmp_versions/
 Module.symvers
 modules.order
-kmod_backup_20261103/nova_desktop
+src/kmod_backup_20261103/nova_desktop
 kmod_backup_20261104/nova_desktop
 
 # ---- 私人记忆与现场凭据 ----

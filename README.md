@@ -93,49 +93,57 @@
 
 **结论：卡莱特可以用普通用户态程序稳定驱动；诺瓦不行。** 诺瓦把「行号」编码进了**时间**里——第 n 个包在什么时刻到达，就代表第 n 行。所以发送节拍不是性能优化项，而是**协议的一部分**。
 
-## 4. 文件说明
+## 4. 目录结构
 
-平铺结构，按用途分类如下。
+```
+.
+├── README.md
+├── doc/      文档：协议逆向、部署 SOP、问题台账
+├── src/      源码：内核模块、发送端、播放器、启动脚本
+├── third/    外部引用说明（不收录第三方代码）
+└── other/    诊断与验证工具、测试素材、抓包文件
+```
 
-### 4.1 诺瓦侧（核心）
+### 4.1 src/ 源码
 
 | 文件 | 说明 |
 |---|---|
-| `nova_kmod.c` | 内核发送模块源码：`/dev/nova_tx`、帧槽、SCHED_FIFO 忙等、`dev_direct_xmit`、相位锚定 |
+| `nova_kmod.c` | 内核发送模块：`/dev/nova_tx`、帧槽、SCHED_FIFO 忙等、`dev_direct_xmit`、相位锚定 |
 | `nova_kmod_uapi.h` | 用户态接口：`CONFIG` / `SUBMIT` / `STATS` 三个 ioctl |
 | `Makefile` | out-of-tree 内核模块构建 + 用户态发送端编译 |
-| `nova_desktop.c` | 发送端（AF_PACKET 后端 + `NOVA_KMOD=1` 内核后端） |
-| `nova_video.py` | 播放器：ffmpeg 解码 → 墙钟选帧 → 追帧/循环 → 送入发送端 |
-| `start_nova_video.sh` / `autostart_nova_video.sh` | 网口调优、调频、时钟闸门、起播 |
-| `start_nova_desktop.sh` / `stop_test_send.sh` | 单测启停脚本 |
-| `nova_test.c` / `nova_txring.c` / `nova_txring2.c` | 失败路径的实验代码（PACKET_TX_RING 等），保留作为证据 |
-| `rt-throttle.conf` | `sched_rt_runtime_us=-1`，防止 RT 线程被内核限流 |
+| `nova_desktop.c` | 诺瓦发送端（AF_PACKET 后端 + `NOVA_KMOD=1` 内核后端） |
+| `nova_video.py` | 诺瓦播放器：ffmpeg 解码 → 墙钟选帧 → 追帧/循环 |
+| `rk_send.py` | 卡莱特生产发送端（AF_PACKET 逐包） |
+| `start_video.sh` / `autostart_video.sh` / `led-wall.service` | 卡莱特启动链 |
+| `start_nova_video.sh` / `autostart_nova_video.sh` | 诺瓦启动链 |
+| `nova_test.c` / `nova_txring.c` / `nova_txring2.c` | 失败路径留证（PACKET_TX_RING 等） |
+| `nova_led.py` / `nova_live.py` / `nova_video_live.py` / `video_send.py` | 笔记本 Npcap 时期实现 |
+| `rt-throttle.conf` | `sched_rt_runtime_us=-1`，防 RT 线程被内核限流 |
+| `kmod_backup_20261103/` | 已验证可用的源码快照 |
 
-### 4.2 卡莱特侧
-
-| 文件 | 说明 |
-|---|---|
-| `analyze_colorlight.py` | 分析抓包：EtherType、行号、包长、帧率 |
-| `analyze_sync.py` | 定位同步包里逐帧变化的字节（帧计数器） |
-| `extract_frame.py` / `render_frame.py` | 从 pcap 提取一帧并还原成图片，验证像素格式 |
-| `replay_frame.py` / `stream_frame.py` / `send_image.py` | 原样回放 / 持续循环 / 任意图片生成行包 |
-| `mirror_screen.py` | 实时镜像屏幕，支持 stretch / letterbox / slice |
-| `nova_live.py` / `nova_video_live.py` / `video_send.py` | 笔记本（Npcap）端的早期发送实现 |
-| `colorlight_probe.py` | 发送 `0x07` 发现包（本卡实测不回复，可跳过） |
-
-### 4.3 运维与验证
-
-| 文件 | 说明 |
-|---|---|
-| `rk.py` | 批量 SSH 执行/上传，凭据走环境变量 |
-| `rtsp_check.py` / `rtsp_v2.py` / `rtsp_60s.py` / `rtsp_final.py` | 摄像头 RTSP 逐帧测各列亮度，检测闪黑 |
-| `solid_feed.py` / `nova_video_probe.py` | 纯色/测试图供帧、探测 |
-| `make_probe.py` / `remeasure.py` | 探针素材生成与复测 |
-| `fix_nic.ps1` / `nova_run.bat` | Windows 侧网卡与启动辅助 |
-
-### 4.4 文档
+### 4.2 doc/ 文档
 
 见[第 10 节](#10-文档索引)。
+
+### 4.3 other/ 工具与素材
+
+| 文件 | 说明 |
+|---|---|
+| `analyze_colorlight.py` / `analyze_sync.py` | 抓包分析：EtherType、行号、帧率、同步包计数器 |
+| `extract_frame.py` / `render_frame.py` | 从 pcap 提取一帧并还原图片，验证像素格式 |
+| `replay_frame.py` / `stream_frame.py` / `send_image.py` | 原样回放 / 持续循环 / 任意图片生成行包 |
+| `mirror_screen.py` / `colorlight_probe.py` | 实时镜像 / 发现包探测 |
+| `rk.py` / `fetch_ko.py` | 批量 SSH、拉取编译产物（凭据走环境变量） |
+| `rtsp_check.py` / `rtsp_v2.py` / `rtsp_60s.py` / `rtsp_final.py` | RTSP 逐帧亮度分析，检测闪黑 |
+| `solid_feed.py` / `nova_video_probe.py` / `make_probe.py` / `remeasure.py` | 纯色供帧、探针生成与复测 |
+| `test_color.sh` / `test_color2.sh` / `test_geom.sh` / `stop_test_send.sh` | 现场单测脚本 |
+| `fix_nic.ps1` / `nova_run.bat` | Windows 侧网卡与启动辅助 |
+| `test_pattern.png` | 480×1080 四色测试图 |
+| `诺瓦V960_USB控制协议抓包.pcap` | V960 USB 控制协议抓包原始数据 |
+
+### 4.4 third/ 外部引用
+
+`third/README.md` 记录借鉴过的公开资料与出处。**不收录第三方代码**，避免许可证与专有运行库问题。
 
 ## 5. 快速开始
 
@@ -262,15 +270,14 @@ sudo bash /home/linaro/led/start_video.sh <切片文件> 0 1767196800
 
 | 文档 | 内容 |
 |---|---|
-| `交接说明_诺瓦大屏直驱.md` | 项目起点、V960 依赖、抓包方案、已知坑 |
-| `诺瓦单列直驱_4路验证总结.md` | 协议逆向、笔记本 4 路验证、RK3588 结构性阻断、V960 初始化依赖 |
-| `四路内核发送_当前状态与对齐核查.md` | 内核模块架构、相位锚定实施、备份与回退 |
-| `8路同步部署说明.md` | 当前 8 路拓扑、同步机制、当日变更、运维命令 |
-| `RK3588四机直驱LED大屏解决方案.md` | 卡莱特侧完整方案（60fps、同步、性能保障） |
-| `RK3588四屏60fps直驱部署SOP.md` | 卡莱特侧部署 SOP 与 19 条问题台账 |
-| `协议分析与回放说明.md` | 卡莱特 S6F 抓包分析（注意：不是诺瓦协议） |
+| `doc/交接说明_诺瓦大屏直驱.md` | 项目起点、V960 依赖、抓包方案、已知坑 |
+| `doc/诺瓦单列直驱_4路验证总结.md` | 协议逆向、笔记本 4 路验证、RK3588 结构性阻断、V960 初始化依赖 |
+| `doc/四路内核发送_当前状态与对齐核查.md` | 内核模块架构、相位锚定实施、备份与回退 |
+| `doc/8路同步部署说明.md` | 当前 8 路拓扑、同步机制、当日变更、运维命令 |
+| `doc/RK3588四机直驱LED大屏解决方案.md` | 卡莱特侧完整方案（60fps、同步、性能保障） |
+| `doc/RK3588四屏60fps直驱部署SOP.md` | 卡莱特侧部署 SOP 与 19 条问题台账 |
+| `doc/协议分析与回放说明.md` | 卡莱特 S6F 抓包分析（注意：不是诺瓦协议） |
 
 ## 11. 参考与致谢
 
-- [olebeck/olebecknovaled](https://github.com/olebeck/olebecknovaled)：早期的诺瓦接收卡 pcap 直发实现。本项目的协议理解起步于它，但**内核态发送方案与它无关**；它的 README 也印证了同一个前提——不初始化接收卡时，每次重启卡都得跑一遍 NovaLCT。
-- 诺瓦 V960 / 卡莱特 S6F 的帧流格式均来自现场抓包逆向，仅用于互通自有屏体，未使用任何厂商 SDK。
+协议理解的起点是 [olebeck/olebecknovaled](https://github.com/olebeck/olebecknovaled)，但本项目的内核态发送方案与它无关。完整的外部资料清单、用途与厂商工具说明见 [`third/README.md`](third/README.md)。
