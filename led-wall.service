@@ -1,0 +1,13 @@
+[Unit]
+Description=LED Wall Video
+After=network-online.target chrony.service
+Wants=network-online.target chrony.service
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /home/linaro/led/autostart_video.sh /userdata/led_video/d8n_p2.mkv
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
