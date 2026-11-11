@@ -26,7 +26,18 @@
 | 像素顺序 | **BGR** |
 | 每帧 | 1080 行包 + 1 同步包 = 1081 包 ≈ 1.58 MB |
 
-## 文件
+## 目录结构
+
+```
+.
+├── README.md
+├── doc/      协议分析、四机方案、60fps 部署 SOP
+├── src/      发送端与启动链
+├── third/    外部引用说明（不收录第三方代码）
+└── other/    抓包分析、回放、镜像等工具
+```
+
+### src/ 源码
 
 | 文件 | 说明 |
 |---|---|
@@ -34,6 +45,11 @@
 | `start_video.sh` | 网口调优（关 EEE/offload/流控）+ 满频 + 绑核 + 起播 |
 | `autostart_video.sh` | 时钟闸门 + 固定 T0 + 墙钟 seek |
 | `led-wall.service` | systemd 单元，开机自启、异常重启 |
+
+### other/ 工具
+
+| 文件 | 说明 |
+|---|---|
 | `analyze_colorlight.py` | 抓包分析：EtherType、行号、包长、帧率 |
 | `analyze_sync.py` | 定位同步包中逐帧变化的字节 |
 | `extract_frame.py` / `render_frame.py` | 提取一帧并还原图片，验证像素格式 |
@@ -42,6 +58,14 @@
 | `colorlight_probe.py` | 发送 0x07 发现包（本卡实测不回复，可跳过） |
 | `fix_nic.ps1` | Windows 侧关 EEE/ULPMode/流控 |
 | `test_pattern.png` | 480×1080 四色测试图 |
+
+### doc/ 文档
+
+`RK3588四机直驱LED大屏解决方案.md`、`RK3588四屏60fps直驱部署SOP.md`、`协议分析与回放说明.md`。
+
+### third/ 外部引用
+
+`third/README.md` 记录借鉴过的公开资料与出处，不收录第三方代码。
 
 ## 部署
 
@@ -88,4 +112,4 @@ cat /sys/class/net/eth0/statistics/tx_errors
 | 某块整体偏 1.1 秒 | RTC 偏差被 chrony 步进，内容永久超前 | 闸门查 `Reference ID` + 偏差 <5ms |
 | 十分钟后失步 | `-ss` 与 `-stream_loop` 同用不回文件头 | 循环自己管，每遍从 0 起播 |
 
-完整台账见 `RK3588四屏60fps直驱部署SOP.md`（19 条），方案细节见 `RK3588四机直驱LED大屏解决方案.md`，协议逆向见 `协议分析与回放说明.md`。
+完整台账见 `doc/RK3588四屏60fps直驱部署SOP.md`（19 条），方案细节见 `doc/RK3588四机直驱LED大屏解决方案.md`，协议逆向见 `doc/协议分析与回放说明.md`。
