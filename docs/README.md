@@ -38,7 +38,7 @@
 
 ```
 .
-├── doc/      文档（含本 README）：协议逆向、4 路验证、内核发送核查
+├── docs/     文档（含本 README）：协议逆向、4 路验证、内核发送核查
 ├── src/      内核模块、发送端、播放器、启动脚本
 ├── third/    外部引用说明（不收录第三方代码）
 └── other/    运维与验证工具
@@ -67,7 +67,7 @@
 | `make_probe.py` / `nova_video_probe.py` / `remeasure.py` / `solid_feed.py` | 探针生成、纯色供帧与复测 |
 | `test_color.sh` / `test_color2.sh` / `test_geom.sh` / `stop_test_send.sh` | 现场单测脚本 |
 
-### doc/ 文档
+### docs/ 文档
 
 `交接说明_诺瓦大屏直驱.md`、`诺瓦单列直驱_4路验证总结.md`、`四路内核发送_当前状态与对齐核查.md`。
 
