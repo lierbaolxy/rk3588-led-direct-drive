@@ -219,7 +219,13 @@ def main():
                 log("catchup skip=%d slot=%d frames=%d" % (skip, slot, base + frames))
 
             if base + frames > want:
-                # 内容已超前，本时隙不写帧，等下一个时隙
+                # 内容已超前，本时隙不写帧：睡到下一个时隙的准备时刻。
+                # 不能在这里直接 continue 空转——实测空转会把这个线程打到 93%，
+                # 与解码/发送线程抢 CPU，反而更容易错过时隙、触发内核补发。
+                target_wall = SYNC_EPOCH + (want + 1) * PERIOD - PHASE_GUARD
+                delay = target_wall - time.time()
+                if delay > 0:
+                    time.sleep(delay)
                 continue
 
             data = get_frame()
