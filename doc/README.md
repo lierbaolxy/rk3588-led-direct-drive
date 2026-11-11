@@ -30,8 +30,7 @@
 
 ```
 .
-├── README.md
-├── doc/      协议分析、四机方案、60fps 部署 SOP
+├── doc/      文档（含本 README）：协议分析、四机方案、60fps 部署 SOP
 ├── src/      发送端与启动链
 ├── third/    外部引用说明（不收录第三方代码）
 └── other/    抓包分析、回放、镜像等工具
@@ -65,7 +64,7 @@
 
 ### third/ 外部引用
 
-`third/README.md` 记录借鉴过的公开资料与出处，不收录第三方代码。
+`../third/README.md` 记录借鉴过的公开资料与出处，不收录第三方代码。
 
 ## 部署
 
@@ -112,4 +111,4 @@ cat /sys/class/net/eth0/statistics/tx_errors
 | 某块整体偏 1.1 秒 | RTC 偏差被 chrony 步进，内容永久超前 | 闸门查 `Reference ID` + 偏差 <5ms |
 | 十分钟后失步 | `-ss` 与 `-stream_loop` 同用不回文件头 | 循环自己管，每遍从 0 起播 |
 
-完整台账见 `doc/RK3588四屏60fps直驱部署SOP.md`（19 条），方案细节见 `doc/RK3588四机直驱LED大屏解决方案.md`，协议逆向见 `doc/协议分析与回放说明.md`。
+完整台账见 `RK3588四屏60fps直驱部署SOP.md`（19 条），方案细节见 `RK3588四机直驱LED大屏解决方案.md`，协议逆向见 `协议分析与回放说明.md`。
