@@ -34,7 +34,18 @@
 - 帧尾用`延迟释放队列`+10ms 边界钳制，避免释放 skb 挤占帧尾空档导致丢锁。
 - 断流时用备份帧补发，保持接收卡锁定。
 
-## 文件
+## 目录结构
+
+```
+.
+├── README.md
+├── doc/      协议逆向、4 路验证、内核发送核查
+├── src/      内核模块、发送端、播放器、启动脚本
+├── third/    外部引用说明（不收录第三方代码）
+└── other/    运维与验证工具
+```
+
+### src/ 源码
 
 | 文件 | 说明 |
 |---|---|
@@ -46,9 +57,24 @@
 | `rt-throttle.conf` | `sched_rt_runtime_us=-1`，防 RT 线程被踢出 CPU |
 | `nova_test.c` / `nova_txring.c` / `nova_txring2.c` | 失败路径留证（TX_RING 等） |
 | `nova_led.py` / `nova_live.py` / `nova_video_live.py` / `video_send.py` | Windows/Npcap 时期实现 |
+| `kmod_backup_20261103/` | 已验证可用的源码快照 |
+
+### other/ 工具
+
+| 文件 | 说明 |
+|---|---|
 | `rk.py` / `fetch_ko.py` | 批量 SSH、拉取编译产物（凭据走环境变量） |
 | `rtsp_*.py` | 摄像头逐帧亮度分析，检测闪黑 |
-| `kmod_backup_20261103/` | 已验证可用的源码快照 |
+| `make_probe.py` / `nova_video_probe.py` / `remeasure.py` / `solid_feed.py` | 探针生成、纯色供帧与复测 |
+| `test_color.sh` / `test_color2.sh` / `test_geom.sh` / `stop_test_send.sh` | 现场单测脚本 |
+
+### doc/ 文档
+
+`交接说明_诺瓦大屏直驱.md`、`诺瓦单列直驱_4路验证总结.md`、`四路内核发送_当前状态与对齐核查.md`。
+
+### third/ 外部引用
+
+`third/README.md` 记录借鉴过的公开资料与出处，不收录第三方代码。
 
 ## 编译
 
@@ -96,7 +122,7 @@ sudo env NOVA_KMOD=1 NOVA_KMOD_CPU=6 \
 | 帧号对齐但相位漂 | 发送按进程启动时刻累加 | 相位锚定到全局 epoch |
 | 补发时接缝错位 | 决策点 8ms 太早 | 收到 3ms |
 
-完整过程见 `诺瓦单列直驱_4路验证总结.md`、`四路内核发送_当前状态与对齐核查.md`，起点见 `交接说明_诺瓦大屏直驱.md`。
+完整过程见 `doc/诺瓦单列直驱_4路验证总结.md`、`doc/四路内核发送_当前状态与对齐核查.md`，起点见 `doc/交接说明_诺瓦大屏直驱.md`。
 
 ## 已知限制
 
